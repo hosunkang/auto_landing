@@ -63,8 +63,11 @@ class HammingMarker(object):
         if len(img.shape) == 2:
             img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         self.draw_contour(img, color=contour_color, linewidth=linewidth)
-        cv2.putText(img, str(self.id), self.center, cv2.FONT_HERSHEY_SIMPLEX, text_thickness, text_color)
-        return img
+        #cv2.putText(img, str(self.id), self.center, cv2.FONT_HERSHEY_SIMPLEX, text_thickness, text_color)
+        return img, self.center
+
+    def get_center_cood(self):
+        return self.center
 
     @classmethod
     def generate(cls):
