@@ -1,6 +1,7 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+from ar_markers import detect_markers
 
 pipeline = rs.pipeline()
 config = rs.config()
@@ -58,19 +59,37 @@ try:
         depth_image = np.asanyarray(aligned_depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
 
+        ########## detect ar markers
+        markers = detect_markers(color_image)
+        for marker in markers:
+            marker.highlite_marker(color_image)
+        cv2.imshow('test frame',color_image)
 
-        wc = depth_image.shape[1]//2
-        hc = depth_image.shape[0]//2
-        center_distance = aligned_depth_frame.get_distance(wc,hc)
-        print('Center distance : {:.3f}m'.format(center_distance))
+        # wc = depth_image.shape[1]//2
+        # hc = depth_image.shape[0]//2
+        # center_distance = aligned_depth_frame.get_distance(wc,hc)
+        # print('Center distance : {:.3f}m'.format(center_distance))
 
-        ######## Find red rectangle in the image
-        hsvimg = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
-        lower_range = np.array([160,70,50])
-        upper_range = np.array([180,255,255])
+        # ######## Find red rectangle in the image
+        # hsvimg = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
+        # lower_range = np.array([175,50,20])
+        # upper_range = np.array([180,255,255])
+        # lower_range2 = np.array([0,50,20])
+        # upper_range2 = np.array([5,255,255])
 
-        mask = cv2.inRange(hsvimg, lower_range, upper_range)
-        cv2.imshow("image",mask)
+        # mask = cv2.inRange(hsvimg, lower_range, upper_range)
+        # mask2 = cv2.inRange(hsvimg, lower_range2, upper_range2)
+        # sum_mask = cv2.bitwise_or(mask, mask2)
+        # masked_img = cv2.bitwise_and(color_image, color_image ,mask=sum_mask)
+        # masked_img_gray = cv2.cvtColor(masked_img, cv2.COLOR_BGR2GRAY)
+
+        # ######## Contour
+        # contours, hierarchy = cv2.findContours(masked_img_gray, cv2.RETR_EXTERNAL,
+        #                                         cv2.CHAIN_APPROX_SIMPLE)
+        # for contour in contours:
+        #     masked_img = cv2.drawContours(masked_img, [contour], -1, (0,0,255), 2)
+
+        # cv2.imshow("image",masked_img)
 
         # Remove background - Set pixels further than clipping_distance to grey
         # grey_color = 153
