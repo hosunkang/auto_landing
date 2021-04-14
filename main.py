@@ -25,11 +25,11 @@ profile = pipeline.start(config)
 # Getting the depth sensor's depth scale (see rs-align example for explanation)
 depth_sensor = profile.get_device().first_depth_sensor()
 depth_scale = depth_sensor.get_depth_scale()
-print("Depth Scale is: " , depth_scale)
+print("Depth Scale is: ", depth_scale)
 
 # We will be removing the background of objects more than
 #  clipping_distance_in_meters meters away
-clipping_distance_in_meters = 1 #1 meter
+clipping_distance_in_meters = 1  # 1 meter
 clipping_distance = clipping_distance_in_meters / depth_scale
 
 # Create an align object
@@ -49,7 +49,8 @@ try:
         aligned_frames = align.process(frames)
 
         # Get aligned frames
-        aligned_depth_frame = aligned_frames.get_depth_frame() # aligned_depth_frame is a 640x480 depth image
+        # aligned_depth_frame is a 640x480 depth image
+        aligned_depth_frame = aligned_frames.get_depth_frame()
         color_frame = aligned_frames.get_color_frame()
 
         # Validate that both frames are valid
@@ -59,23 +60,18 @@ try:
         depth_image = np.asanyarray(aligned_depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
 
-        ########## detect AR markers
+        # detect AR markers
         markers = detect_markers(color_image)
         for marker in markers:
             marker.highlite_marker(color_image)
             center = marker.get_center_cood()
-            img = cv2.circle(color_image, center, 10, (0,0,255), -1)
-            center_distance = aligned_depth_frame.get_distance(list(center)[0],list(center)[1])
-            print('Center distance : {:.3f}m'.format(center_distance))
-            
-        
-        
-        cv2.imshow('test frame',color_image)
+            img = cv2.circle(color_image, center, 5, (0, 0, 255), -1)
+            distance = aligned_depth_frame.get_distance(
+                list(center)[0], list(center)[1])
+            #print('Distance : {:.3f}m'.format(distance))
+            marker.put_distance(color_image, round(distance,3))
 
-        # wc = depth_image.shape[1]//2
-        # hc = depth_image.shape[0]//2
-        # center_distance = aligned_depth_frame.get_distance(wc,hc)
-        # print('Center distance : {:.3f}m'.format(center_distance))
+        cv2.imshow('test frame', color_image)
 
         # Remove background - Set pixels further than clipping_distance to grey
         # grey_color = 153
@@ -90,7 +86,7 @@ try:
 
         # cv2.namedWindow('Align Example', cv2.WINDOW_NORMAL)
         # cv2.imshow('Align Example', images)
-        
+
         # Press esc or 'q' to close the image window
         key = cv2.waitKey(1)
         if key & 0xFF == ord('q') or key == 27:

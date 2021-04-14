@@ -66,6 +66,9 @@ class HammingMarker(object):
         #cv2.putText(img, str(self.id), self.center, cv2.FONT_HERSHEY_SIMPLEX, text_thickness, text_color)
         return img, self.center
 
+    def put_distance(self, img, distance, text_color=(255, 0, 0), linewidth=1, text_thickness=1):
+        cv2.putText(img, str(distance), self.center, cv2.FONT_HERSHEY_SIMPLEX, text_thickness, text_color)
+
     def get_center_cood(self):
         return self.center
 

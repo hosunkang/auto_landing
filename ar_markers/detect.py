@@ -55,7 +55,7 @@ def detect_markers(img):
       img: a color or grayscale image that may or may not contain a marker.
 
     Output:
-      a list of found markers. If no markers are found, then it is an empty list.
+      a list of found markers. .0If no markers are found, then it is an empty list.
     """
     if len(img.shape) > 2:
         width, height, _ = img.shape
@@ -70,6 +70,7 @@ def detect_markers(img):
     # We only keep the long enough contours
     min_contour_length = min(width, height) / 50
     contours = [contour for contour in contours if len(contour) > min_contour_length]
+    
     warped_size = 49
     canonical_marker_coords = array(
         (
@@ -83,6 +84,9 @@ def detect_markers(img):
     markers_list = []
     for contour in contours:
         approx_curve = cv2.approxPolyDP(contour, len(contour) * 0.01, True)
+        # cv2.drawContours(img, approx_curve, -1, (0,255,0), 2)
+        # cv2.imshow('test frame2',img)
+
         if not (len(approx_curve) == 4 and cv2.isContourConvex(approx_curve)):
             continue
 
@@ -90,6 +94,7 @@ def detect_markers(img):
             cv2.convexHull(approx_curve, clockwise=False),
             dtype='float32'
         )
+
         persp_transf = cv2.getPerspectiveTransform(sorted_curve, canonical_marker_coords)
         warped_img = cv2.warpPerspective(img, persp_transf, (warped_size, warped_size))
 
