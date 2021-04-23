@@ -1,7 +1,6 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
-from ar_markers import detect_markers
 
 pipeline = rs.pipeline()
 config = rs.config()
